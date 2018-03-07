@@ -54,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("response", response);
                             if( valid(response) ){
                                 Log.d("login", "y2");
-                                saveCredentials(email, password, response);
+                                databaseHelper = new DatabaseHelper(MainActivity.this);
+                                databaseHelper.saveCredentials(email, password, response);
+                                databaseHelper.saveCourses(response);
                                 finish();
                                 startActivity(new Intent(MainActivity.this, MyCourses.class));
                             }
@@ -73,21 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void saveCredentials(String email, String password, String response) {
-        try {
-            JSONObject object = new JSONObject(response);
-            String userId  = object.getString("userId");
-            Log.d("uid", userId);
-            List<String> columnList = new TableColumns("credentials").prepareListOf("id", "email", "password");
-            List<String> columnValueList = new TableColumns("credentials").prepareListOf(userId, email, password);
-            new QueryBuilder("credentials")
-                    .setColumns(columnList)
-                    .setColumnValues(columnValueList)
-                    .insert(MainActivity.this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     private boolean valid(String response) {
         boolean valid = true;

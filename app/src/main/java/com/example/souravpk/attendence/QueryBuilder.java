@@ -64,8 +64,8 @@ public class QueryBuilder {
             for (int i=0; i < columnList.size(); i++){
                 values.put(columnList.get(i), columnValues.get(i));
             }
-            db.insert("credentials", null, values);
-            Log.d("insert", "success");
+            db.insert(tableName, null, values);
+            Log.d("insert", "inserted in "+tableName);
         }catch (Exception e){
             Log.d("error", e.toString());
         }

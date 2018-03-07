@@ -6,6 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +37,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String q = "create table credentials(id integer primary key, email string, password string)";
+        sqLiteDatabase.execSQL(q);
+
+        q = "create table my_courses(id integer primary key, course_id integer unique, course_code string, course_name string, institute string, dept string)";
         sqLiteDatabase.execSQL(q);
     }
 
@@ -75,5 +82,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return allRows.size() > 0;
     }
 
+    public void saveCredentials(String email, String password, String response) {
+        try {
+            JSONObject object = new JSONObject(response);
+            String userId  = object.getString("userId");
+            Log.d("uid", userId);
+            List<String> columnList = new TableColumns("credentials").prepareListOf("id", "email", "password");
+            List<String> columnValueList = new TableColumns("credentials").prepareListOf(userId, email, password);
+            new QueryBuilder("credentials")
+                    .setColumns(columnList)
+                    .setColumnValues(columnValueList)
+                    .insert(context);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
+
+    public void saveCourses(String response) {
+        QueryBuilder queryBuilder = new QueryBuilder("my_courses");
+        try {
+            JSONObject object = new JSONObject(response);
+
+            String institute = object.getString("institute");
+            String dept = object.getString("dept");
+            //Log.d("institute", institute+"--"+dept);
+
+            JSONArray Jarray  = object.getJSONArray("courses");
+
+            for (int i = 0; i < Jarray.length(); i++)
+            {
+                JSONObject course = Jarray.getJSONObject(i);
+                List<String> columns = new TableColumns("my_courses").prepareListOf("course_id", "course_code", "course_name", "institute", "dept");
+                List<String> columnValues = new TableColumns("my_courses").prepareListOf(course.getString("course_id"), course.getString("course_code"), course.getString("course_name"), institute, dept);
+                queryBuilder.setColumns(columns).setColumnValues(columnValues).insert(context);
+                //Log.d("courses", course.getString("course_id")+"--"+course.getString("course_name")+"--"+course.getString("course_code"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
