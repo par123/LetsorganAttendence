@@ -41,6 +41,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         q = "create table my_courses(id integer primary key, course_id integer unique, course_code string, course_name string, institute string, dept string)";
         sqLiteDatabase.execSQL(q);
+
+        q = "create table student_basic_info(id integer primary key, user_id integer, course_id integer, roll_numeric integer, roll_full_form string, name string not null default '')";
+        //course_id is unique in server database
+        sqLiteDatabase.execSQL(q);
     }
 
     @Override
@@ -103,18 +107,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         QueryBuilder queryBuilder = new QueryBuilder("my_courses");
         try {
             JSONObject object = new JSONObject(response);
-
-            String institute = object.getString("institute");
-            String dept = object.getString("dept");
-            //Log.d("institute", institute+"--"+dept);
-
             JSONArray Jarray  = object.getJSONArray("courses");
 
             for (int i = 0; i < Jarray.length(); i++)
             {
                 JSONObject course = Jarray.getJSONObject(i);
                 List<String> columns = new TableColumns("my_courses").prepareListOf("course_id", "course_code", "course_name", "institute", "dept");
-                List<String> columnValues = new TableColumns("my_courses").prepareListOf(course.getString("course_id"), course.getString("course_code"), course.getString("course_name"), institute, dept);
+                List<String> columnValues = new TableColumns("my_courses").prepareListOf(course.getString("course_id"), course.getString("course_code"), course.getString("course_name"), course.getString("institute"), course.getString("dept"));
                 queryBuilder.setColumns(columns).setColumnValues(columnValues).insert(context);
                 //Log.d("courses", course.getString("course_id")+"--"+course.getString("course_name")+"--"+course.getString("course_code"));
             }
@@ -122,4 +121,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
+
+    public void saveStudentBasicInfo(String response){
+        QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");
+        try{
+            JSONObject object = new JSONObject(response);
+            JSONArray jsonArray = object.getJSONArray("courseTakerStudents");
+            int len = jsonArray.length();
+            for (int i=0; i < len; i++){
+                JSONObject student = jsonArray.getJSONObject(i);
+                String userId = student.getString("user_id");
+                String courseId = student.getString("course_id");
+                String rollNumeric = student.getString("roll_numeric");
+                String rollFullForm = student.getString("roll_full_form");
+                String name = student.getString("name");
+                Log.d("roll", rollFullForm);
+                List<String> columns = new TableColumns("student_basic_info").prepareListOf("user_id","course_id","roll_numeric","roll_full_form","name");
+                List<String> values = new TableColumns("student_basic_info").prepareListOf(userId, courseId, rollNumeric, rollFullForm, name);
+                queryBuilder.setColumns(columns).setColumnValues(values).insert(context);
+            }
+        }catch (Exception e){
+            Log.d("error", e.toString()+" >> saveStudentBasicInfo()");
+        }
+    }
+
+
+
 }

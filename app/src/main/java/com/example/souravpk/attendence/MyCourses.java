@@ -62,9 +62,11 @@ public class MyCourses extends AppCompatActivity {
             text.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(MyCourses.this, text.getTag()+"", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MyCourses.this, text.getTag()+"", Toast.LENGTH_SHORT).show();
                     //finish();
-                    startActivity(new Intent(getApplicationContext(), TakeAttendance.class));
+                    Intent intent = new Intent(getApplicationContext(), TakeAttendance.class);
+                    intent.putExtra("course_id", text.getTag()+"");
+                    startActivity(intent);
                 }
             });
         }

@@ -19,7 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/attendanceRecyclerContainer"
-        android:layout_marginTop="20sp"
+        android:layout_marginTop="2sp"
+        android:padding="5sp"
+        android:background="@color/bg2"
         >
         <TextView
             android:id="@+id/name"
@@ -58,6 +60,7 @@
             android:layout_below="@id/name"
             android:textColor="#c1c43b00"
             android:text="Present"
+            android:checked="true"
             />
     </RelativeLayout>
 

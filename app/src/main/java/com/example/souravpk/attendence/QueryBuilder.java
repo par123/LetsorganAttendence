@@ -15,7 +15,7 @@ import java.util.List;
 
 public class QueryBuilder {
 
-    private String tableName, columnNamesInQueryFormat, columnValuesInQueryFormat ;
+    private String tableName, columnNamesInQueryFormat, columnValuesInQueryFormat, conditionClause="" ;
     private int totalColumn, totalValues;
     private List<String> columnList, columnValues;
 
@@ -35,7 +35,7 @@ public class QueryBuilder {
             }
         }
         columnNamesInQueryFormat = buildStr;
-        Log.d("column", columnNamesInQueryFormat);
+        //Log.d("column", columnNamesInQueryFormat);
 
         return this;
     }
@@ -77,12 +77,18 @@ public class QueryBuilder {
         return  data;
     }
 
+    public QueryBuilder where(String column, String operator, String value){
+        this.conditionClause = " where "+column+operator+"'"+value+"'";
+
+        return this;
+    }
+
     public List<List<String>> selectAllRows(Context context){
         List<List<String>> allRows = new ArrayList<List<String>>();
         SQLiteDatabase db ;
         try {
             db = new DatabaseHelper(context).getReadableDatabase();
-            String q = "select "+columnNamesInQueryFormat+ " from "+tableName;
+            String q = "select "+columnNamesInQueryFormat+ " from "+tableName+conditionClause;
             Log.d("q", q);
             Cursor cursor = db.rawQuery(q, null);
             if( cursor != null ){

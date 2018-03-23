@@ -1,6 +1,7 @@
 package com.example.souravpk.attendence;
 
 import android.app.DatePickerDialog;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -77,35 +79,54 @@ public class TakeAttendance extends AppCompatActivity {
 
 
     private void prepareStudentData() {
-        Student student = new Student("Mad Max: Fury Road", "7/10", "70%", "Absent ");
-        studentList.add(student);
 
-        student = new Student("Inside Out", "8/10", "80%", "Present");
-        studentList.add(student);
+        String courseId = getIntent().getStringExtra("course_id");
+        Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
 
-        student = new Student("Partho Protim Mondal", "8/10", "80%", "Present");
-        studentList.add(student);
+        QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");
+        List<String> columns = new TableColumns("student_basic_info").prepareListOf("user_id","course_id","roll_numeric","roll_full_form","name");
+        List<List<String>> studentBasicInfo = queryBuilder.setColumns(columns)
+                .where("course_id", "=", courseId)
+                .selectAllRows(getApplicationContext());
+        Log.d("count", studentBasicInfo.size()+" for coure id "+courseId);
 
-        student = new Student("Inside Out", "8/10", "80%", "Present");
-        studentList.add(student);
+        Student student;
 
-        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-        studentList.add(student);
+        for (List<String> studentInfo : studentBasicInfo){
+            String name = String.valueOf(studentInfo.get(4));
+            student = new Student(name, "7/10", "70%", "Present ");
+            studentList.add(student);
+        }
 
-        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-        studentList.add(student);
-
-        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-        studentList.add(student);
-
-        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-        studentList.add(student);
-
-        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-        studentList.add(student);
-
-        student = new Student("Shree Nanda Lal Chandra Sarkar", "8/10", "80%", "Absent ");
-        studentList.add(student);
+//        student = new Student("Mad Max: Fury Road", "7/10", "70%", "Absent ");
+//        studentList.add(student);
+//
+//        student = new Student("Inside Out", "8/10", "80%", "Present");
+//        studentList.add(student);
+//
+//        student = new Student("Partho Protim Mondal", "8/10", "80%", "Present");
+//        studentList.add(student);
+//
+//        student = new Student("Inside Out", "8/10", "80%", "Present");
+//        studentList.add(student);
+//
+//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
+//        studentList.add(student);
+//
+//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
+//        studentList.add(student);
+//
+//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
+//        studentList.add(student);
+//
+//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
+//        studentList.add(student);
+//
+//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
+//        studentList.add(student);
+//
+//        student = new Student("Shree Nanda Lal Chandra Sarkar", "8/10", "80%", "Absent ");
+//        studentList.add(student);
 
         studentAdapter.notifyDataSetChanged();
     }

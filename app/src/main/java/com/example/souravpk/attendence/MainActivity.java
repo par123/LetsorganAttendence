@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                                 databaseHelper = new DatabaseHelper(MainActivity.this);
                                 databaseHelper.saveCredentials(email, password, response);
                                 databaseHelper.saveCourses(response);
+                                databaseHelper.saveStudentBasicInfo(response);
                                 finish();
                                 startActivity(new Intent(MainActivity.this, MyCourses.class));
                             }
