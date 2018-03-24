@@ -45,6 +45,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         q = "create table student_basic_info(id integer primary key, user_id integer, course_id integer, roll_numeric integer, roll_full_form string, name string not null default '')";
         //course_id is unique in server database
         sqLiteDatabase.execSQL(q);
+
+
+        q = "create table student_attendance (id integer primary key, user_id integer, date string, time string, attendance integer not null default 1)";
+        sqLiteDatabase.execSQL(q);
     }
 
     @Override

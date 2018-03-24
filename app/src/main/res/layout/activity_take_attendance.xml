@@ -13,8 +13,6 @@
     >
 
 
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,6 +21,8 @@
         android:padding="5sp"
         android:background="@color/bg2"
         >
+
+
         <TextView
             android:id="@+id/name"
             android:layout_width="match_parent"
@@ -35,10 +35,18 @@
             />
 
         <TextView
-            android:id="@+id/classCount"
+            android:id="@+id/rollFullForm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/name"
+            android:text="JN-34"
+            />
+
+        <TextView
+            android:id="@+id/classCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rollFullForm"
             android:text="8/10 "
             />
 
@@ -47,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/classCount"
-            android:layout_below="@id/name"
+            android:layout_below="@id/rollFullForm"
             android:text="(80%)"
             android:paddingLeft="30sp"
             />
@@ -58,8 +66,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/name"
-            android:textColor="#c1c43b00"
+            android:paddingRight="10sp"
+            android:textColor="#338c06"
             android:text="Present"
+            android:buttonTint="#4cc211"
             android:checked="true"
             />
     </RelativeLayout>

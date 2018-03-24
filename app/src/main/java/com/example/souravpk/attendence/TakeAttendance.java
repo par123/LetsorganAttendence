@@ -27,6 +27,7 @@ public class TakeAttendance extends AppCompatActivity {
     private List<Student> studentList = new ArrayList<>();
     private RecyclerView recyclerView;
     private StudentAdapter studentAdapter;
+    List<List<String>> studentBasicInfo;
     Toolbar toolbar;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -62,14 +63,24 @@ public class TakeAttendance extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.attendance_recycler_view);
 
-        studentAdapter = new StudentAdapter(studentList);
+
+        String courseId = getIntent().getStringExtra("course_id");
+        Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
+
+        QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");
+        List<String> columns = new TableColumns("student_basic_info").prepareListOf("user_id","course_id","roll_numeric","roll_full_form","name");
+        studentBasicInfo = queryBuilder.setColumns(columns)
+                .where("course_id", "=", courseId)
+                .selectAllRows(getApplicationContext());
+        Log.d("count", studentBasicInfo.size()+" for coure id "+courseId);
+
+        studentAdapter = new StudentAdapter(studentList, studentBasicInfo);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(studentAdapter);
 
         prepareStudentData();
-
 
     }
 
@@ -80,53 +91,15 @@ public class TakeAttendance extends AppCompatActivity {
 
     private void prepareStudentData() {
 
-        String courseId = getIntent().getStringExtra("course_id");
-        Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
-
-        QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");
-        List<String> columns = new TableColumns("student_basic_info").prepareListOf("user_id","course_id","roll_numeric","roll_full_form","name");
-        List<List<String>> studentBasicInfo = queryBuilder.setColumns(columns)
-                .where("course_id", "=", courseId)
-                .selectAllRows(getApplicationContext());
-        Log.d("count", studentBasicInfo.size()+" for coure id "+courseId);
-
         Student student;
 
         for (List<String> studentInfo : studentBasicInfo){
             String name = String.valueOf(studentInfo.get(4));
-            student = new Student(name, "7/10", "70%", "Present ");
+            String userId = String.valueOf(studentInfo.get(0));
+            String rollFullForm = String.valueOf(studentInfo.get(3));
+            student = new Student(name, rollFullForm, "7/10", "70%", "Present");
             studentList.add(student);
         }
-
-//        student = new Student("Mad Max: Fury Road", "7/10", "70%", "Absent ");
-//        studentList.add(student);
-//
-//        student = new Student("Inside Out", "8/10", "80%", "Present");
-//        studentList.add(student);
-//
-//        student = new Student("Partho Protim Mondal", "8/10", "80%", "Present");
-//        studentList.add(student);
-//
-//        student = new Student("Inside Out", "8/10", "80%", "Present");
-//        studentList.add(student);
-//
-//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-//        studentList.add(student);
-//
-//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-//        studentList.add(student);
-//
-//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-//        studentList.add(student);
-//
-//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-//        studentList.add(student);
-//
-//        student = new Student("Gopal Roy", "8/10", "80%", "Absent ");
-//        studentList.add(student);
-//
-//        student = new Student("Shree Nanda Lal Chandra Sarkar", "8/10", "80%", "Absent ");
-//        studentList.add(student);
 
         studentAdapter.notifyDataSetChanged();
     }
