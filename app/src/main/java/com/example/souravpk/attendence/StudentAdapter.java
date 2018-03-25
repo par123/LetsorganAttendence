@@ -1,5 +1,6 @@
 package com.example.souravpk.attendence;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
@@ -12,6 +13,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,10 +26,12 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
     private List<Student> studentList;
     List<List<String>> studentBasicInfo;
     int courseId;
+    private Context context;
 
-    public StudentAdapter(List<Student> studentList, List<List<String>> studentBasicInfo){
+    public StudentAdapter(List<Student> studentList, List<List<String>> studentBasicInfo, Context context){
         this.studentList = studentList;
         this.studentBasicInfo = studentBasicInfo;
+        this.context = context;
         try {
             courseId = Integer.parseInt( studentBasicInfo.get(0).get(1) );
         }catch (Exception e){}
@@ -69,7 +74,18 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
 
             //attendanceCheckbox
 
-            int userId = Integer.parseInt( studentBasicInfo.get(n).get(0) );
+            final int userId = Integer.parseInt( studentBasicInfo.get(n).get(0) ); // n th row and 0 th column
+            String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            List attendance = new DatabaseHelper(context).getAttendance(courseId, userId, date);
+            try {
+                if( attendance.get(0).equals("1") ){
+                    designCheckbox(attendanceCheckbox, 1);
+                }else {
+                    designCheckbox(attendanceCheckbox, 0);
+                }
+                Log.d("at",attendance.get(0).equals("1")? "1" : "0");
+            }catch (Exception e){}
+
 
             classCount.setId(n);
             percent.setId(n);
@@ -82,23 +98,39 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
                 public void onClick(View view) {
                     boolean checked = attendanceCheckbox.isChecked();
                     String attendanceStatus = checked ? "Present" : "Absent";
+                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
+
+
                     if(attendanceStatus.equals("Absent")){
-                        attendanceCheckbox.setBackgroundColor(Color.parseColor("#c0d60101"));
-                        attendanceCheckbox.setTextColor(Color.parseColor("#ffffff"));
-                    }else{
-                        attendanceCheckbox.setBackgroundColor(Color.parseColor("#1ba99a34"));
-                        attendanceCheckbox.setTextColor(Color.parseColor("#338c06"));
+                        databaseHelper.saveAttendanceStatus(courseId, attendanceCheckbox.getId(), 0);
+                        designCheckbox(attendanceCheckbox, 0);
+                    }else{ //present
+                        databaseHelper.saveAttendanceStatus(courseId, attendanceCheckbox.getId(), 1);
+                        designCheckbox(attendanceCheckbox, 1);
                     }
 
-                    
 
-                    Log.d("atten", attendanceStatus+" for user id"+attendanceCheckbox.getId() +" in course "+courseId);
+
+                    //Log.d("atten", attendanceStatus+" for user id"+attendanceCheckbox.getId() +" in course "+courseId);
                     classCount.setText(attendanceCheckbox.getId() +"");
                     percent.setText(attendanceCheckbox.getId() +"");
-                    attendanceCheckbox.setText(attendanceStatus);
                 }
             });
             n++;
+        }
+    }
+
+    private void designCheckbox(CheckBox attendanceCheckbox, int attendance){
+        if(attendance == 1){
+            attendanceCheckbox.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#4cc211")));
+            attendanceCheckbox.setTextColor(Color.parseColor("#338c06"));
+            attendanceCheckbox.setChecked(true);
+            attendanceCheckbox.setText("Present");
+        }else {
+            attendanceCheckbox.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#c0d60101")));
+            attendanceCheckbox.setTextColor(Color.parseColor("#ff0000"));
+            attendanceCheckbox.setChecked(false);
+            attendanceCheckbox.setText("Absent");
         }
     }
 }

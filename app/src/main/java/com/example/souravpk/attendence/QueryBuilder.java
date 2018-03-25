@@ -13,17 +13,19 @@ import java.util.List;
  * Created by sourav pk on 3/6/2018.
  */
 
-public class QueryBuilder {
+class QueryBuilder {
 
-    private String tableName, columnNamesInQueryFormat, columnValuesInQueryFormat, conditionClause="" ;
+    private String tableName, columnNamesInQueryFormat, columnValuesInQueryFormat, conditionClause="",
+            whereUniqueClause="", updateQuery="" ;
     private int totalColumn, totalValues;
     private List<String> columnList, columnValues;
+    private Context context;
 
-    public QueryBuilder(String tableName){
+    QueryBuilder(String tableName){
         this.tableName = tableName;
     }
 
-    public QueryBuilder setColumns(List<String> columnList){
+    QueryBuilder setColumns(List<String> columnList){
         this.columnList = columnList;
         totalColumn = columnList.size();
         String buildStr = "";
@@ -40,7 +42,7 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder setColumnValues(List<String> valueList){
+    QueryBuilder setColumnValues(List<String> valueList){
         this.columnValues = valueList;
         totalValues = valueList.size();
         String buildStr = "";
@@ -52,12 +54,12 @@ public class QueryBuilder {
             }
         }
         columnValuesInQueryFormat = buildStr;
-        Log.d("columnValues", columnValuesInQueryFormat);
+        //Log.d("columnValues", columnValuesInQueryFormat);
 
         return this;
     }
 
-    public void insert(Context context){
+    void insert(Context context){
         SQLiteDatabase db = new DatabaseHelper(context).getWritableDatabase();
         ContentValues values = new ContentValues();
         try {
@@ -65,25 +67,28 @@ public class QueryBuilder {
                 values.put(columnList.get(i), columnValues.get(i));
             }
             db.insert(tableName, null, values);
-            Log.d("insert", "inserted in "+tableName);
+            //Log.d("insert", "inserted in "+tableName);
         }catch (Exception e){
             Log.d("error", e.toString());
         }
     }
+    
 
-    public List<String> fetchData(){
-        List<String> data = new ArrayList<>();
-
-        return  data;
-    }
-
-    public QueryBuilder where(String column, String operator, String value){
-        this.conditionClause = " where "+column+operator+"'"+value+"'";
+    QueryBuilder where(String column, String operator, String value){
+        if(conditionClause.equals("")){
+            //if where() is invoked once
+            this.conditionClause+= " where "+column+operator+"'"+value+"'";
+        } else{
+            //if where() is invoked more than once
+            this.conditionClause+= " and "+column+operator+"'"+value+"'";
+        }
 
         return this;
     }
 
-    public List<List<String>> selectAllRows(Context context){
+
+    List<List<String>> selectAllRows(Context context){
+        this.context = context;
         List<List<String>> allRows = new ArrayList<List<String>>();
         SQLiteDatabase db ;
         try {
@@ -105,6 +110,32 @@ public class QueryBuilder {
         }
         return  allRows;
     }
+
+
+    boolean exist(Context context){
+        List<List<String>> list = selectAllRows(context);
+        for (List<String> list1 : list){
+            Log.d("exist", list1.get(0)+"--"+list1.get(1)+"--"+list1.get(2) );
+        }
+
+        return selectAllRows(context).size() > 0;
+    }
+
+
+    QueryBuilder setUpdateValues(String column, String value){
+        updateQuery = "update "+tableName+" set "+column+" = "+value+" "+conditionClause;
+
+        return this;
+    }
+
+    void update(Context context){
+        SQLiteDatabase db = new DatabaseHelper(context).getWritableDatabase();
+        //Log.d("update ", updateQuery);
+        Log.d("update ", "updated");
+        db.execSQL(updateQuery);
+    }
+
+
 
 
 }

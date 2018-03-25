@@ -10,7 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     SQLiteDatabase db;
 
-    public DatabaseHelper(Context context){
+    DatabaseHelper(Context context){
         super(context, dbName, null, dbVersion);
         this.context = context;
     }
@@ -47,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(q);
 
 
-        q = "create table student_attendance (id integer primary key, user_id integer, date string, time string, attendance integer not null default 1)";
+        q = "create table student_attendance (id integer primary key, course_id integer, user_id integer, date string, attendance integer not null default 1)";
         sqLiteDatabase.execSQL(q);
     }
 
@@ -58,43 +60,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean userExist(String userId){
-        List columnList = new ArrayList();
-        columnList.add("id");
-        columnList.add("email");
-        columnList.add("password");
-        List valueList = new ArrayList();
-        valueList.add(userId);
-        List user = new QueryBuilder("credentials")
-                .setColumns(columnList)
-                .setColumnValues(valueList)
-                .fetchData();
-
-        Log.d("mylog", user.toString());
-
-        return user.size() == 1 ;
-    }
-
-
-    public boolean userLoggedIn() {
+    boolean userLoggedIn() {
         List columnList = new TableColumns("credentials").prepareListOf("id");
         queryBuilder = new QueryBuilder("credentials");
         List<List<String>> allRows = queryBuilder.setColumns(columnList).selectAllRows(context);
 
         for (List<String> row : allRows){
-            
+
         }
-        Log.d("row", String.valueOf(allRows.size()));
+        //Log.d("row", String.valueOf(allRows.size()));
 
 
         return allRows.size() > 0;
     }
 
-    public void saveCredentials(String email, String password, String response) {
+    void saveCredentials(String email, String password, String response) {
         try {
             JSONObject object = new JSONObject(response);
             String userId  = object.getString("userId");
-            Log.d("uid", userId);
+            //Log.d("uid", userId);
             List<String> columnList = new TableColumns("credentials").prepareListOf("id", "email", "password");
             List<String> columnValueList = new TableColumns("credentials").prepareListOf(userId, email, password);
             new QueryBuilder("credentials")
@@ -107,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public void saveCourses(String response) {
+    void saveCourses(String response) {
         QueryBuilder queryBuilder = new QueryBuilder("my_courses");
         try {
             JSONObject object = new JSONObject(response);
@@ -126,7 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void saveStudentBasicInfo(String response){
+    void saveStudentBasicInfo(String response){
         QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");
         try{
             JSONObject object = new JSONObject(response);
@@ -150,5 +134,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    void saveAttendanceStatus(int courseId, int userId, int attendanceStatus) {
+        QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
+        String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        List columns = new TableColumns("student_attendance")
+                .prepareListOf("course_id", "user_id", "date");
+        List values = new TableColumns("student_attendance")
+                .prepareListOf(String.valueOf(courseId), String.valueOf(userId), date);
 
+        boolean exist = queryBuilder.setColumns(columns).setColumnValues(values)
+                .where("course_id", "=", String.valueOf(courseId))
+                .where("user_id", "=", String.valueOf(userId))
+                .where("date", "=", date)
+                .exist(context);
+
+        if(exist){
+            Log.d("exist", "this data exist");
+            queryBuilder = new QueryBuilder("student_attendance");
+            queryBuilder.where("user_id", "=", String.valueOf(userId))
+                    .where("course_id", "=", String.valueOf(courseId))
+                    .where("date", "=", date)
+                    .setUpdateValues("attendance", String.valueOf(attendanceStatus))
+                    .update(context);
+        }else{
+            columns = new TableColumns("student_attendance").prepareListOf("course_id", "user_id", "date", "attendance");
+            values = new TableColumns("student_attendance").prepareListOf(String.valueOf(courseId), String.valueOf(userId), date, String.valueOf(attendanceStatus));
+            queryBuilder.setColumns(columns).setColumnValues(values).insert(context);
+
+            Log.d("exist", courseId+" "+userId+" "+date+" inserted");
+        }
+    }
+
+    List getAttendance(int courseId, int userId, String date) {
+        List data = new ArrayList();
+        QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
+        List columns = new TableColumns("student_attendance").prepareListOf("attendance");
+        List<List<String>> list = queryBuilder.setColumns(columns)
+                .where("course_id", "=", String.valueOf(courseId))
+                .where("user_id", "=", String.valueOf(userId))
+                .where("date", "=", date)
+                .selectAllRows(context);
+
+        try {
+            data.add(list.get(0).get(0));
+        }catch (Exception e){}
+
+
+
+        for (List list1 : list){
+            //Log.d("at", list1.get(0)+"");
+        }
+
+        return data;
+    }
 }

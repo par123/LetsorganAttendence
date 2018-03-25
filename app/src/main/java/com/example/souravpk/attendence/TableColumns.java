@@ -21,7 +21,7 @@ public class TableColumns {
         List list = new ArrayList();
         for (int i=0; i < columnNames.length ; i++){
             list.add(columnNames[i]);
-            Log.d("columnName", columnNames[i]);
+            //Log.d("columnName", columnNames[i]);
         }
 
 

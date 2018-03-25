@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class TakeAttendance extends AppCompatActivity {
@@ -29,6 +30,7 @@ public class TakeAttendance extends AppCompatActivity {
     private StudentAdapter studentAdapter;
     List<List<String>> studentBasicInfo;
     Toolbar toolbar;
+    String courseId;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -52,29 +54,29 @@ public class TakeAttendance extends AppCompatActivity {
             }
         };
 
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(TakeAttendance.this, pickedDate, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+//        toolbar.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                new DatePickerDialog(TakeAttendance.this, pickedDate, myCalendar
+//                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+//                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+//            }
+//        });
 
         recyclerView = findViewById(R.id.attendance_recycler_view);
 
 
-        String courseId = getIntent().getStringExtra("course_id");
-        Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
+        courseId = getIntent().getStringExtra("course_id");
+        //Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
 
         QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");
         List<String> columns = new TableColumns("student_basic_info").prepareListOf("user_id","course_id","roll_numeric","roll_full_form","name");
         studentBasicInfo = queryBuilder.setColumns(columns)
                 .where("course_id", "=", courseId)
                 .selectAllRows(getApplicationContext());
-        Log.d("count", studentBasicInfo.size()+" for coure id "+courseId);
+        //Log.d("count", studentBasicInfo.size()+" for course id "+courseId);
 
-        studentAdapter = new StudentAdapter(studentList, studentBasicInfo);
+        studentAdapter = new StudentAdapter(studentList, studentBasicInfo, getApplicationContext());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -82,6 +84,14 @@ public class TakeAttendance extends AppCompatActivity {
 
         prepareStudentData();
 
+
+
+        columns = new TableColumns("student_attendance").prepareListOf("course_id", "user_id", "date", "attendance");
+        queryBuilder = new QueryBuilder("student_attendance");
+        List<List<String>> rows = queryBuilder.setColumns(columns).selectAllRows(getApplicationContext());
+        for (List row : rows){
+            Log.d("row", row.get(0)+" > "+row.get(1)+" > "+row.get(2)+" > "+row.get(3));
+        }
     }
 
     private void updateLabel(int dayOfMonth, int monthOfYear, int year) {
@@ -97,7 +107,19 @@ public class TakeAttendance extends AppCompatActivity {
             String name = String.valueOf(studentInfo.get(4));
             String userId = String.valueOf(studentInfo.get(0));
             String rollFullForm = String.valueOf(studentInfo.get(3));
-            student = new Student(name, rollFullForm, "7/10", "70%", "Present");
+            String attendanceText="Present";
+
+            String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            List attendance = new DatabaseHelper(getApplicationContext()).getAttendance(Integer.parseInt(courseId), Integer.parseInt(userId), date);
+            try{
+                if( attendance.get(0).equals("1") ){
+                    attendanceText = "Present";
+                }else {
+                    attendanceText = "Absent";
+                }
+            }catch (Exception e){}
+
+            student = new Student(name, rollFullForm, "7/10", "70%", attendanceText);
             studentList.add(student);
         }
 

@@ -86,7 +86,7 @@ public class MyCourses extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     int textViewNumber = position;
-                    Toast.makeText(MyCourses.this, textViewNumber+" th TV", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MyCourses.this, textViewNumber+" th TV", Toast.LENGTH_SHORT).show();
                 }
             });
         }
