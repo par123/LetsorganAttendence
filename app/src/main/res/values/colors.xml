@@ -7,5 +7,8 @@
     <color name="white">#FFFFFF</color>
     <color name="bg1">#DDDDDD</color>
     <color name="font1">#3949a7</color>
+    <color name="toolbar">#273b4e</color>
+    <color name="header">#f52c3e50</color>
+    <color name="drawerHead">#34495e</color>
     <color name="bg2">#1ba99a34</color>
 </resources>

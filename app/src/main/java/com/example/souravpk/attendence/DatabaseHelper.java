@@ -187,4 +187,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return data;
     }
+
+    public int getTotalClass(String currentDate) {
+        int total = 0;
+        QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
+        List<String> columnList = new TableColumns("student_attendance").prepareListOf("distinct date");
+        total = queryBuilder.setColumns(columnList).selectAllRows(context).size();
+
+        return total;
+    }
+
+    public int getNumOfPresentedClass(String courseId, String userId) {
+        int p = 0;
+        QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
+        List<String> columnList = new TableColumns("student_attendance").prepareListOf("course_id", "user_id", "attendance");
+        p = queryBuilder.setColumns(columnList)
+                .where("course_id", "=", courseId)
+                .where("user_id", "=", userId)
+                .where("attendance", "=", "1")
+                .selectAllRows(context).size();
+
+        return p;
+    }
+
+    void presentAllStudents() {
+        queryBuilder = new QueryBuilder("student_attendance");
+        List<String> columnList = new TableColumns("student_attendance").prepareListOf("date");
+        queryBuilder.setColumns(columnList).where("date", "=", "07-06-2018");
+        String x = queryBuilder.exist(context) ? "exist" : "not exist";
+
+        Log.d("exist", x);
+    }
 }

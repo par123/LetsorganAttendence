@@ -115,7 +115,7 @@ class QueryBuilder {
     boolean exist(Context context){
         List<List<String>> list = selectAllRows(context);
         for (List<String> list1 : list){
-            Log.d("exist", list1.get(0)+"--"+list1.get(1)+"--"+list1.get(2) );
+            //Log.d("exist", list1.get(0)+"--"+list1.get(1)+"--"+list1.get(2) );
         }
 
         return selectAllRows(context).size() > 0;

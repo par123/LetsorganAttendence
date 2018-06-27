@@ -74,7 +74,10 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
 
             //attendanceCheckbox
 
-            final int userId = Integer.parseInt( studentBasicInfo.get(n).get(0) ); // n th row and 0 th column
+            int userId =0;
+            try {
+                userId = Integer.parseInt( studentBasicInfo.get(n).get(0) ); // n th row and 0 th column
+            }catch (Exception e){}
             String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
             List attendance = new DatabaseHelper(context).getAttendance(courseId, userId, date);
             try {
@@ -83,7 +86,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
                 }else {
                     designCheckbox(attendanceCheckbox, 0);
                 }
-                Log.d("at",attendance.get(0).equals("1")? "1" : "0");
+                //Log.d("at",attendance.get(0).equals("1")? "1" : "0");
             }catch (Exception e){}
 
 

@@ -26,11 +26,10 @@ import java.util.List;
 public class TakeAttendance extends AppCompatActivity {
 
     private List<Student> studentList = new ArrayList<>();
-    private RecyclerView recyclerView;
     private StudentAdapter studentAdapter;
     List<List<String>> studentBasicInfo;
     Toolbar toolbar;
-    String courseId;
+    String courseId, currentDate;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -41,8 +40,10 @@ public class TakeAttendance extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
 
         final Calendar myCalendar = Calendar.getInstance();
-        final String currentDateTime = new SimpleDateFormat("dd-MM-yyyy").format(myCalendar.getTime());
-        toolbar.setTitle(currentDateTime);
+        currentDate = new SimpleDateFormat("dd-MM-yyyy").format(myCalendar.getTime());
+        toolbar.setTitle(currentDate);
+
+        initializeToday();
 
         final DatePickerDialog.OnDateSetListener pickedDate = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -63,7 +64,7 @@ public class TakeAttendance extends AppCompatActivity {
 //            }
 //        });
 
-        recyclerView = findViewById(R.id.attendance_recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.attendance_recycler_view);
 
 
         courseId = getIntent().getStringExtra("course_id");
@@ -94,6 +95,11 @@ public class TakeAttendance extends AppCompatActivity {
         }
     }
 
+    private void initializeToday() {
+        DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+        databaseHelper.presentAllStudents();
+    }
+
     private void updateLabel(int dayOfMonth, int monthOfYear, int year) {
         toolbar.setTitle(dayOfMonth+"-"+(monthOfYear+1)+"-"+year);
     }
@@ -118,6 +124,12 @@ public class TakeAttendance extends AppCompatActivity {
                     attendanceText = "Absent";
                 }
             }catch (Exception e){}
+
+            DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+
+            int totalClass = databaseHelper.getTotalClass(currentDate);
+            int presentedClass = databaseHelper.getNumOfPresentedClass(courseId, userId);
+            Log.d("presented class", presentedClass+"/"+totalClass+" for uid "+userId+" in course "+courseId);
 
             student = new Student(name, rollFullForm, "7/10", "70%", attendanceText);
             studentList.add(student);
