@@ -86,7 +86,7 @@ public class MyCourses extends AppCompatActivity {
         mDrawerView = (PlaceHolderView)findViewById(R.id.drawerView);
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         mGalleryView = (PlaceHolderView)findViewById(R.id.galleryView);
-        setupDrawer();
+        //setupDrawer();
 
     }
 
