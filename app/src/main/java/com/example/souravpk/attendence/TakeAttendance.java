@@ -37,6 +37,18 @@ public class TakeAttendance extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.take_attendance_recycler);
 
+
+
+
+
+
+
+
+
+
+
+
+
         toolbar = findViewById(R.id.toolbar);
 
         final Calendar myCalendar = Calendar.getInstance();

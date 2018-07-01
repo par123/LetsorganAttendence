@@ -23,7 +23,7 @@ public class ApiCaller extends AsyncTask<String, Void, String> {
 
     public ApiCaller_Callback delegate;
     public String serverResponse;
-    private String requestType;
+    private String requestType, requestUrl;
 
     public ApiCaller(String requestType, ApiCaller_Callback delegate){
         this.requestType = requestType;
