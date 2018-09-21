@@ -218,4 +218,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.d("exist", x);
     }
+
+    public List<List<String>> getAttendance(String courseId) {
+        List<List<String>> list = new ArrayList();
+
+        QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
+        List<String> columnList = new TableColumns("student_attendance").prepareListOf("user_id", "date", "attendance");
+        list = queryBuilder.setColumns(columnList).where("course_id", "=", courseId).selectAllRows(context);
+
+        return list;
+    }
 }

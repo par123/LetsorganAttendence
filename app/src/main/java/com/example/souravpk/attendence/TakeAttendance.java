@@ -46,9 +46,6 @@ public class TakeAttendance extends AppCompatActivity {
 
 
 
-
-
-
         toolbar = findViewById(R.id.toolbar);
 
         final Calendar myCalendar = Calendar.getInstance();

@@ -25,7 +25,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
 
     private List<Student> studentList;
     List<List<String>> studentBasicInfo;
-    int courseId;
+    int courseId, totalPresent = 70;
     private Context context;
 
     public StudentAdapter(List<Student> studentList, List<List<String>> studentBasicInfo, Context context){
@@ -49,8 +49,8 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
         Student student = studentList.get(position);
         holder.name.setText(student.getName());
         holder.rollFullForm.setText(student.getRollFullForm());
-        holder.classCount.setText(student.getClassCount());
-        holder.percent.setText(student.getPercent());
+//        holder.classCount.setText(student.getClassCount());
+//        holder.percent.setText(student.getPercent());
         holder.attendanceCheckbox.setText(student.getAttendanceStatus());
     }
 
@@ -61,15 +61,16 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
 
     private int n=0;
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView name, rollFullForm, classCount, percent, tmpClassCount, tmpPercent;
+        public TextView name, rollFullForm, classCount, percent, tmpClassCount, tmpPercent, todayPresentStatistics;
         public CheckBox attendanceCheckbox;
+
 
         public MyViewHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name);
             rollFullForm = itemView.findViewById(R.id.rollFullForm);
-            classCount = (TextView) itemView.findViewById(R.id.classCount);
-            percent = (TextView) itemView.findViewById(R.id.percent);
+//            classCount = (TextView) itemView.findViewById(R.id.classCount);
+//            percent = (TextView) itemView.findViewById(R.id.percent);
             attendanceCheckbox = (CheckBox) itemView.findViewById(R.id.attendanceCheckbox);
 
             //attendanceCheckbox
@@ -90,11 +91,11 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
             }catch (Exception e){}
 
 
-            classCount.setId(n);
-            percent.setId(n);
+//            classCount.setId(n);
+//            percent.setId(n);
             attendanceCheckbox.setId(userId);
 
-            percent.setPadding(150,0,0,0);
+//            percent.setPadding(150,0,0,0);
 
             attendanceCheckbox.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -107,16 +108,17 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.MyViewHo
                     if(attendanceStatus.equals("Absent")){
                         databaseHelper.saveAttendanceStatus(courseId, attendanceCheckbox.getId(), 0);
                         designCheckbox(attendanceCheckbox, 0);
+                        --totalPresent;
                     }else{ //present
                         databaseHelper.saveAttendanceStatus(courseId, attendanceCheckbox.getId(), 1);
                         designCheckbox(attendanceCheckbox, 1);
+                        ++totalPresent;
                     }
 
 
-
                     //Log.d("atten", attendanceStatus+" for user id"+attendanceCheckbox.getId() +" in course "+courseId);
-                    classCount.setText(attendanceCheckbox.getId() +"");
-                    percent.setText(attendanceCheckbox.getId() +"");
+                    //classCount.setText(attendanceCheckbox.getId() +"");
+                    //percent.setText(attendanceCheckbox.getId() +"");
                 }
             });
             n++;

@@ -42,23 +42,7 @@
             android:text="JN-34"
             />
 
-        <TextView
-            android:id="@+id/classCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/rollFullForm"
-            android:text="8/10 "
-            />
 
-        <TextView
-            android:id="@+id/percent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/classCount"
-            android:layout_below="@id/rollFullForm"
-            android:text="(80%)"
-            android:paddingLeft="30sp"
-            />
 
         <CheckBox
             android:id="@+id/attendanceCheckbox"

@@ -1,6 +1,7 @@
 package com.example.souravpk.attendence;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,16 +43,16 @@ public class DrawerMenuItem {
     private void onResolved() {
         switch (mMenuPosition){
             case DRAWER_MENU_ITEM_PROFILE:
-                itemNameTxt.setText("Profile");
-                itemIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon1));
+                itemNameTxt.setText("Notifications");
+                itemIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.bg1));
                 break;
             case DRAWER_MENU_ITEM_REQUESTS:
-                itemNameTxt.setText("Requests");
-                itemIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon1));
+                itemNameTxt.setText("Save Backup");
+                itemIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.bg1));
                 break;
             case DRAWER_MENU_ITEM_GROUPS:
-                itemNameTxt.setText("Groups");
-                itemIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon1));
+                itemNameTxt.setText("Generate pdf");
+                itemIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.bg1));
                 break;
             case DRAWER_MENU_ITEM_MESSAGE:
                 itemNameTxt.setText("Messages");
@@ -81,6 +82,7 @@ public class DrawerMenuItem {
         switch (mMenuPosition){
             case DRAWER_MENU_ITEM_PROFILE:
                 Toast.makeText(mContext, "Profile", Toast.LENGTH_SHORT).show();
+                Log.d("menu", "click");
                 if(mCallBack != null)mCallBack.onProfileMenuSelected();
                 break;
             case DRAWER_MENU_ITEM_REQUESTS:

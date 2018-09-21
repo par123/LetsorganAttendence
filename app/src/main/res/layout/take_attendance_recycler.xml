@@ -25,13 +25,6 @@
         android:layout_marginTop="60sp"
         android:layout_marginLeft="20sp"
         >
-        <TextView
-            android:id="@+id/todayPresentStatistics"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:text="__ students present out of 60"
-            />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

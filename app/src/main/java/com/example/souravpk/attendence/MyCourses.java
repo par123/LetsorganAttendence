@@ -1,7 +1,8 @@
 package com.example.souravpk.attendence;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.net.Uri;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mindorks.placeholderview.PlaceHolderView;
+
+import org.json.JSONArray;
 
 import java.util.List;
 
@@ -88,6 +91,22 @@ public class MyCourses extends AppCompatActivity {
         mGalleryView = (PlaceHolderView)findViewById(R.id.galleryView);
         //setupDrawer();
 
+
+
+        DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+        List<List<String>> attendanceOfSingleCourse = databaseHelper.getAttendance("39");
+
+        JSONArray jsonArray = new JSONArray();
+        for(List list : attendanceOfSingleCourse){
+            Log.d("sheet", list.toString());
+            JSONArray newArray = new JSONArray(list);
+            jsonArray.put(newArray);
+        }
+
+        Log.d("sheet", jsonArray.toString());
+
+
+
     }
 
 
@@ -116,12 +135,13 @@ public class MyCourses extends AppCompatActivity {
                 .addView(new DrawerHeader())
                 .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_PROFILE))
                 .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_REQUESTS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_MESSAGE))
+//                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_MESSAGE))
                 .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_GROUPS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_NOTIFICATIONS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_TERMS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_SETTINGS))
-                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_LOGOUT));
+//                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_NOTIFICATIONS))
+//                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_TERMS))
+//                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_SETTINGS))
+//                .addView(new DrawerMenuItem(this.getApplicationContext(), DrawerMenuItem.DRAWER_MENU_ITEM_LOGOUT))
+        ;
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar, R.string.open_drawer, R.string.close_drawer) {
             @Override
@@ -131,14 +151,21 @@ public class MyCourses extends AppCompatActivity {
 
             @Override
             public void onDrawerClosed(View drawerView) {
+                Log.d("menu", "closed");
                 super.onDrawerClosed(drawerView);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://letsorgan.com/generatedPDF/38.pdf"));
+                startActivity(browserIntent);
             }
         };
 
-        mDrawer.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
+        //mDrawer.addDrawerListener(drawerToggle);
+        //drawerToggle.syncState();
     }
 
+
+
+
     /* drawer */
+
 
 }

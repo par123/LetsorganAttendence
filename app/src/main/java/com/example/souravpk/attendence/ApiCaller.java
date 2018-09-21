@@ -40,7 +40,7 @@ public class ApiCaller extends AsyncTask<String, Void, String> {
             String email = strings[0];
             String password = strings[1];
             //Create a URL object holding our url
-            URL myUrl = new URL("https://letsorgan.com/api/mobile/attendance/get_courses?email="+email+"&pass="+password);
+            URL myUrl = new URL("http://choriyedao.com/api/attendance/get_basic_data?email="+email+"&password="+password);
             //Create a connection
             HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
             //Set methods and timeouts
