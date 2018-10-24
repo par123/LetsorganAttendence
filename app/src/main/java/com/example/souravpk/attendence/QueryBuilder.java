@@ -94,7 +94,7 @@ class QueryBuilder {
         try {
             db = new DatabaseHelper(context).getReadableDatabase();
             String q = "select "+columnNamesInQueryFormat+ " from "+tableName+conditionClause;
-            Log.d("q", q);
+            //Log.d("q", q);
             Cursor cursor = db.rawQuery(q, null);
             if( cursor != null ){
                 while (cursor.moveToNext()){

@@ -210,17 +210,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return p;
     }
 
-    void presentAllStudents() {
+    void presentAllStudents(String courseId) {
         queryBuilder = new QueryBuilder("student_attendance");
         List<String> columnList = new TableColumns("student_attendance").prepareListOf("date");
         queryBuilder.setColumns(columnList).where("date", "=", new Library().getTodayDate());
-        String x = queryBuilder.exist(context) ? "exist" : "not exist";
+        boolean existTodaysAttendance = queryBuilder.exist(context);
 
-        Log.d("exist", x);
+        if(! existTodaysAttendance){
+            columnList = new TableColumns("student_basic_info").prepareListOf("user_id");
+            List<List<String>> studentTakenThisCourse = queryBuilder.setColumns(columnList).where("course_id", "=", courseId).selectAllRows(context);
+            Log.d("count", studentTakenThisCourse.size()+"");
+            for (List user:studentTakenThisCourse){
+                int userId = Integer.parseInt( user.get(0).toString() );
+                saveAttendanceStatus(Integer.parseInt(courseId),userId,1);
+            }
+        }
     }
 
     public String getAttendance(String courseId) {
-        List<List<String>> list = new ArrayList();
+        List<List<String>> list;
 
         QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
         List<String> columnList = new TableColumns("student_attendance").prepareListOf("course_id", "user_id", "date", "attendance");
@@ -235,12 +243,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             jsonStr+= "{\"course_id\":\""+course_id+"\",\"user_id\":\""+user_id+"\",\"attendance_date\":\""+attendance_date+"\",\"attendance_status\":\""+attendance_status+"\"},";
         }
-        jsonStr = removeLastChar(jsonStr); // remove last ,
+        jsonStr = removeLastChar(jsonStr); // remove last comma(,)
         jsonStr = "["+jsonStr+"]";
         //Log.d("row", jsonStr);
 
         return jsonStr;
-        //return list;
     }
 
     public void syncData(String response) {
@@ -249,6 +256,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     private String removeLastChar(String str) {
-        return str.substring(0, str.length() - 1);
+        String retVal = "";
+        try {
+            retVal = str.substring(0, str.length() - 1);
+        }catch (Exception e){
+        }
+        return retVal;
     }
 }

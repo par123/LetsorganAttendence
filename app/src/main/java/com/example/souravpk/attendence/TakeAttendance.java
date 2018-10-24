@@ -52,7 +52,7 @@ public class TakeAttendance extends AppCompatActivity {
         currentDate = new SimpleDateFormat("dd-MM-yyyy").format(myCalendar.getTime());
         toolbar.setTitle(currentDate);
 
-        initializeToday();
+
 
         final DatePickerDialog.OnDateSetListener pickedDate = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -78,6 +78,7 @@ public class TakeAttendance extends AppCompatActivity {
 
         courseId = getIntent().getStringExtra("course_id");
         //Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
+        initializeToday(courseId);
 
         QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");
         List<String> columns = new TableColumns("student_basic_info").prepareListOf("user_id","course_id","roll_numeric","roll_full_form","name");
@@ -100,13 +101,13 @@ public class TakeAttendance extends AppCompatActivity {
         queryBuilder = new QueryBuilder("student_attendance");
         List<List<String>> rows = queryBuilder.setColumns(columns).selectAllRows(getApplicationContext());
         for (List row : rows){
-            Log.d("row", row.get(0)+" > "+row.get(1)+" > "+row.get(2)+" > "+row.get(3));
+            //Log.d("row", row.get(0)+" > "+row.get(1)+" > "+row.get(2)+" > "+row.get(3));
         }
     }
 
-    private void initializeToday() {
+    private void initializeToday(String courseId) {
         DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-        databaseHelper.presentAllStudents();
+        databaseHelper.presentAllStudents(courseId);
     }
 
     private void updateLabel(int dayOfMonth, int monthOfYear, int year) {
@@ -138,7 +139,7 @@ public class TakeAttendance extends AppCompatActivity {
 
             int totalClass = databaseHelper.getTotalClass(currentDate);
             int presentedClass = databaseHelper.getNumOfPresentedClass(courseId, userId);
-            Log.d("presented class", presentedClass+"/"+totalClass+" for uid "+userId+" in course "+courseId);
+            //Log.d("presented class", presentedClass+"/"+totalClass+" for uid "+userId+" in course "+courseId);
 
             student = new Student(name, rollFullForm, "7/10", "70%", attendanceText);
             studentList.add(student);
