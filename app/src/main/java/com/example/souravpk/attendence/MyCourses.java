@@ -118,10 +118,10 @@ public class MyCourses extends AppCompatActivity {
                     }
                 });
                 DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-                String attendanceOfSingleCourse = databaseHelper.getAttendance();
-                Log.d("attendance", attendanceOfSingleCourse);
+                String attendanceData = databaseHelper.getAttendance();
+                Log.d("attendance", attendanceData);
 
-                apiCaller.execute(attendanceOfSingleCourse);
+                apiCaller.execute(attendanceData);
 
 //                JSONArray jsonArray = new JSONArray();
 //                for(List list : attendanceOfSingleCourse){

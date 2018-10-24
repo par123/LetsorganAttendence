@@ -230,10 +230,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    /*
-    @param : courseId
-    return : attendance data of courseId
-     */
     public String getAttendance() {
         List<List<String>> list;
 
@@ -244,7 +240,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String jsonStr = "";
         for (List row : list){
             String course_id = row.get(0).toString();
-            Log.d("courseId", course_id);
             String user_id = row.get(1).toString();
             String attendance_date = row.get(2).toString();
             String attendance_status = row.get(3).toString();
