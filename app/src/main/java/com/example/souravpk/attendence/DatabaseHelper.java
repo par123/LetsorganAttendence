@@ -215,15 +215,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<String> columnList = new TableColumns("student_attendance").prepareListOf("date");
         queryBuilder.setColumns(columnList).where("date", "=", new Library().getTodayDate());
         boolean existTodaysAttendance = queryBuilder.exist(context);
+        //Log.d("presentAllStudents", existTodaysAttendance? "exist today":"not exist today");
 
         if(! existTodaysAttendance){
+            //Log.d("initializeToday", "todays attendance NOT exist");
+            queryBuilder = new QueryBuilder("student_basic_info");
             columnList = new TableColumns("student_basic_info").prepareListOf("user_id");
             List<List<String>> studentTakenThisCourse = queryBuilder.setColumns(columnList).where("course_id", "=", courseId).selectAllRows(context);
             Log.d("count", studentTakenThisCourse.size()+"");
             for (List user:studentTakenThisCourse){
                 int userId = Integer.parseInt( user.get(0).toString() );
-                saveAttendanceStatus(Integer.parseInt(courseId),userId,1);
+                saveAttendanceStatus(Integer.parseInt(courseId), userId,1);
+                Log.d("initializeToday", "course id :"+courseId+" uid: "+userId+" date "+new Library().getTodayDate());
             }
+        }
+        else{
+            Log.d("initializeToday", "already initialized");
         }
     }
 

@@ -122,6 +122,7 @@ public class MyCourses extends AppCompatActivity {
                 });
                 DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
                 String attendanceOfSingleCourse = databaseHelper.getAttendance("4");
+                Log.d("attendance", attendanceOfSingleCourse);
 
                 apiCaller.execute(attendanceOfSingleCourse);
 
