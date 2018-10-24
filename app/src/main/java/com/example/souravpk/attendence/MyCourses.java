@@ -20,6 +20,9 @@ import android.widget.Toast;
 import com.mindorks.placeholderview.PlaceHolderView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.util.List;
 
@@ -62,12 +65,12 @@ public class MyCourses extends AppCompatActivity {
             text.setText(Html.fromHtml(textToShow));
             text.setTextSize(12);
             text.setGravity(Gravity.LEFT);
-            text.setPadding(25,50,25,50);
+            text.setPadding(25,30,25,30);
             text.setTextSize(18);
             text.setBackgroundResource(R.drawable.bg1);
             text.setTag(courseId);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0,60,0,0);
+            params.setMargins(0,30,0,0);
             text.setLayoutParams(params);
             MainLL.addView(text);
 
@@ -85,25 +88,61 @@ public class MyCourses extends AppCompatActivity {
         }
 
 
+        final TextView text = new TextView(this);
+        text.setText(Html.fromHtml("Synchronise to Server"));
+        text.setTextSize(12);
+        text.setGravity(Gravity.CENTER);
+        text.setPadding(15,15,15,15);
+        text.setTextSize(23);
+        text.setBackgroundResource(R.drawable.bg2);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(100,100,100,100);
+        text.setLayoutParams(params);
+        MainLL.addView(text);
+
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MyCourses.this, "Synchronizing....", Toast.LENGTH_LONG).show();
+                ApiCaller apiCaller;
+                apiCaller = new ApiCaller("syncData", new ApiCaller_Callback() {
+                    @Override
+                    public void getServerResponse(String response) {
+                        Log.d("sync response", response);
+                        if( valid(response) ){
+                            Log.d("sync data", "y2");
+                            DatabaseHelper databaseHelper = new DatabaseHelper(MyCourses.this);
+                            databaseHelper.syncData(response);
+                            Toast.makeText(MyCourses.this, "Data update successful !", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(MyCourses.this, "Couldn't sync.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+                List<List<String>> attendanceOfSingleCourse = databaseHelper.getAttendance("4");
+
+                JSONArray jsonArray = new JSONArray();
+                for(List list : attendanceOfSingleCourse){
+                    JSONArray newArray = new JSONArray(list);
+                    jsonArray.put(newArray);
+                }
+                Log.d("json", jsonArray.toString());
+
+                apiCaller.execute(String.valueOf(attendanceOfSingleCourse));
+            }
+        });
+
+
+
+
         mDrawer = (DrawerLayout)findViewById(R.id.drawerLayout);
         mDrawerView = (PlaceHolderView)findViewById(R.id.drawerView);
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         mGalleryView = (PlaceHolderView)findViewById(R.id.galleryView);
         //setupDrawer();
 
-
-
-        DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-        List<List<String>> attendanceOfSingleCourse = databaseHelper.getAttendance("39");
-
-        JSONArray jsonArray = new JSONArray();
-        for(List list : attendanceOfSingleCourse){
-            Log.d("sheet", list.toString());
-            JSONArray newArray = new JSONArray(list);
-            jsonArray.put(newArray);
-        }
-
-        Log.d("sheet", jsonArray.toString());
 
 
 
@@ -166,6 +205,25 @@ public class MyCourses extends AppCompatActivity {
 
 
     /* drawer */
+
+
+
+    private boolean valid(String response) {
+        boolean valid = false;
+        try {
+            JSONObject object = new JSONObject(response);
+            String syncStatus  = object.getString("syncStatus");
+            if(syncStatus.equals("success")){
+                valid = true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        if(response.equals("success")){
+//            valid = true;
+//        }
+        return valid;
+    }
 
 
 }

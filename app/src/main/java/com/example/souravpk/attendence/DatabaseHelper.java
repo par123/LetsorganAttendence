@@ -213,7 +213,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     void presentAllStudents() {
         queryBuilder = new QueryBuilder("student_attendance");
         List<String> columnList = new TableColumns("student_attendance").prepareListOf("date");
-        queryBuilder.setColumns(columnList).where("date", "=", "07-06-2018");
+        queryBuilder.setColumns(columnList).where("date", "=", new Library().getTodayDate());
         String x = queryBuilder.exist(context) ? "exist" : "not exist";
 
         Log.d("exist", x);
@@ -223,9 +223,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<List<String>> list = new ArrayList();
 
         QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
-        List<String> columnList = new TableColumns("student_attendance").prepareListOf("user_id", "date", "attendance");
+        List<String> columnList = new TableColumns("student_attendance").prepareListOf("course_id", "user_id", "date", "attendance");
         list = queryBuilder.setColumns(columnList).where("course_id", "=", courseId).selectAllRows(context);
 
         return list;
+    }
+
+    public void syncData(String response) {
+        Log.d("db syncData", "syncData() invoked");
     }
 }

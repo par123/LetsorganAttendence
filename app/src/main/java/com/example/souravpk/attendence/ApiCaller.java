@@ -10,10 +10,12 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Created by sourav pk on 2/10/2018.
@@ -35,12 +37,41 @@ public class ApiCaller extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... strings) {
         String response = "";
         String inputLine;
-
+        URL myUrl = null;
         try {
+            myUrl = new URL("http://choriyedao.com");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        if(requestType.equals("getCourseData")){
             String email = strings[0];
             String password = strings[1];
             //Create a URL object holding our url
-            URL myUrl = new URL("http://choriyedao.com/api/attendance/get_basic_data?email="+email+"&password="+password);
+            try {
+                myUrl = new URL("http://choriyedao.com/api/attendance/get_basic_data?email="+email+"&password="+password);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(requestType.equals("syncData")){
+            String data = strings[0];
+            Log.d("sync", "should call api");
+            try {
+                try {
+                    myUrl = new URL("http://choriyedao.com/api/attendance/send_attendance_data?data="+ URLEncoder.encode(data, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            response = "success";
+        }
+
+        try {
+
             //Create a connection
             HttpURLConnection connection =(HttpURLConnection) myUrl.openConnection();
             //Set methods and timeouts
