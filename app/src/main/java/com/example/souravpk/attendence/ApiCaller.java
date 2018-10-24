@@ -60,14 +60,13 @@ public class ApiCaller extends AsyncTask<String, Void, String> {
             Log.d("sync", "should call api");
             try {
                 try {
-                    myUrl = new URL("http://choriyedao.com/api/attendance/send_attendance_data?data="+ URLEncoder.encode(data, "UTF-8"));
+                    myUrl = new URL("http://choriyedao.com/api/attendance/send_attendance_data?data="+URLEncoder.encode(data, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            response = "success";
         }
 
         try {

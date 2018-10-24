@@ -219,17 +219,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d("exist", x);
     }
 
-    public List<List<String>> getAttendance(String courseId) {
+    public String getAttendance(String courseId) {
         List<List<String>> list = new ArrayList();
 
         QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
         List<String> columnList = new TableColumns("student_attendance").prepareListOf("course_id", "user_id", "date", "attendance");
         list = queryBuilder.setColumns(columnList).where("course_id", "=", courseId).selectAllRows(context);
 
-        return list;
+        String jsonStr = "";
+        for (List row : list){
+            String course_id = row.get(0).toString();
+            String user_id = row.get(1).toString();
+            String attendance_date = row.get(2).toString();
+            String attendance_status = row.get(3).toString();
+
+            jsonStr+= "{\"course_id\":\""+course_id+"\",\"user_id\":\""+user_id+"\",\"attendance_date\":\""+attendance_date+"\",\"attendance_status\":\""+attendance_status+"\"},";
+        }
+        jsonStr = removeLastChar(jsonStr); // remove last ,
+        jsonStr = "["+jsonStr+"]";
+        //Log.d("row", jsonStr);
+
+        return jsonStr;
+        //return list;
     }
 
     public void syncData(String response) {
         Log.d("db syncData", "syncData() invoked");
+    }
+
+
+    private String removeLastChar(String str) {
+        return str.substring(0, str.length() - 1);
     }
 }

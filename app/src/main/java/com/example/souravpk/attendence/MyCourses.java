@@ -121,16 +121,16 @@ public class MyCourses extends AppCompatActivity {
                     }
                 });
                 DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-                List<List<String>> attendanceOfSingleCourse = databaseHelper.getAttendance("4");
+                String attendanceOfSingleCourse = databaseHelper.getAttendance("4");
 
-                JSONArray jsonArray = new JSONArray();
-                for(List list : attendanceOfSingleCourse){
-                    JSONArray newArray = new JSONArray(list);
-                    jsonArray.put(newArray);
-                }
-                Log.d("json", jsonArray.toString());
+                apiCaller.execute(attendanceOfSingleCourse);
 
-                apiCaller.execute(String.valueOf(attendanceOfSingleCourse));
+//                JSONArray jsonArray = new JSONArray();
+//                for(List list : attendanceOfSingleCourse){
+//                    JSONArray newArray = new JSONArray(list);
+//                    jsonArray.put(newArray);
+//                }
+//                Log.d("json", jsonArray.toString());
             }
         });
 
@@ -219,9 +219,7 @@ public class MyCourses extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        if(response.equals("success")){
-//            valid = true;
-//        }
+        valid = true;
         return valid;
     }
 
