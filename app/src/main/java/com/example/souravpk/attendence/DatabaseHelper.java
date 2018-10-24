@@ -179,12 +179,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             data.add(list.get(0).get(0));
         }catch (Exception e){}
 
-
-
-        for (List list1 : list){
-            //Log.d("at", list1.get(0)+"");
-        }
-
         return data;
     }
 
@@ -213,37 +207,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     void presentAllStudents(String courseId) {
         queryBuilder = new QueryBuilder("student_attendance");
         List<String> columnList = new TableColumns("student_attendance").prepareListOf("date");
-        queryBuilder.setColumns(columnList).where("date", "=", new Library().getTodayDate());
+        queryBuilder.setColumns(columnList)
+                .where("course_id", "=", courseId)
+                .where("date", "=", new Library().getTodayDate());
         boolean existTodaysAttendance = queryBuilder.exist(context);
-        //Log.d("presentAllStudents", existTodaysAttendance? "exist today":"not exist today");
 
         if(! existTodaysAttendance){
             //Log.d("initializeToday", "todays attendance NOT exist");
             queryBuilder = new QueryBuilder("student_basic_info");
             columnList = new TableColumns("student_basic_info").prepareListOf("user_id");
             List<List<String>> studentTakenThisCourse = queryBuilder.setColumns(columnList).where("course_id", "=", courseId).selectAllRows(context);
-            Log.d("count", studentTakenThisCourse.size()+"");
+            //Log.d("count", studentTakenThisCourse.size()+"");
             for (List user:studentTakenThisCourse){
                 int userId = Integer.parseInt( user.get(0).toString() );
                 saveAttendanceStatus(Integer.parseInt(courseId), userId,1);
-                Log.d("initializeToday", "course id :"+courseId+" uid: "+userId+" date "+new Library().getTodayDate());
+                Log.d("initializeToday", "initialized >> course id :"+courseId+" uid: "+userId+" date "+new Library().getTodayDate());
             }
         }
         else{
-            Log.d("initializeToday", "already initialized");
+            //Log.d("initializeToday", "already initialized");
         }
     }
 
-    public String getAttendance(String courseId) {
+
+    /*
+    @param : courseId
+    return : attendance data of courseId
+     */
+    public String getAttendance() {
         List<List<String>> list;
 
         QueryBuilder queryBuilder = new QueryBuilder("student_attendance");
         List<String> columnList = new TableColumns("student_attendance").prepareListOf("course_id", "user_id", "date", "attendance");
-        list = queryBuilder.setColumns(columnList).where("course_id", "=", courseId).selectAllRows(context);
+        list = queryBuilder.setColumns(columnList).selectAllRows(context);
 
         String jsonStr = "";
         for (List row : list){
             String course_id = row.get(0).toString();
+            Log.d("courseId", course_id);
             String user_id = row.get(1).toString();
             String attendance_date = row.get(2).toString();
             String attendance_status = row.get(3).toString();
@@ -256,6 +257,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return jsonStr;
     }
+
+
 
     public void syncData(String response) {
         Log.d("db syncData", "syncData() invoked");

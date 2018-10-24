@@ -77,7 +77,7 @@ public class TakeAttendance extends AppCompatActivity {
 
 
         courseId = getIntent().getStringExtra("course_id");
-        Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(TakeAttendance.this, courseId+" course id", Toast.LENGTH_SHORT).show();
         initializeToday(courseId);
 
         QueryBuilder queryBuilder = new QueryBuilder("student_basic_info");

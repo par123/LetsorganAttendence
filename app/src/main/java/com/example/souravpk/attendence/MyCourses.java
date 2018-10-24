@@ -48,9 +48,6 @@ public class MyCourses extends AppCompatActivity {
 
 
         LinearLayout MainLL= (LinearLayout) findViewById(R.id.my_courses_LL);
-        for(int i=0; i<15; i++){
-
-        }
 
         for (List<String> course : courses){
             int courseId = Integer.parseInt(course.get(0));
@@ -121,7 +118,7 @@ public class MyCourses extends AppCompatActivity {
                     }
                 });
                 DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-                String attendanceOfSingleCourse = databaseHelper.getAttendance("4");
+                String attendanceOfSingleCourse = databaseHelper.getAttendance();
                 Log.d("attendance", attendanceOfSingleCourse);
 
                 apiCaller.execute(attendanceOfSingleCourse);
